@@ -27,31 +27,21 @@ const renderCountry = function (data, className = '') {
   countriesContainer.style.opacity = 1;
 };
 
-const getCountryAndNeighbour = function (country) {
-  // ajax call country 1
-  const request = new XMLHttpRequest();
-  request.open('GET', `https://restcountries.eu/rest/v2/name/${country}`);
-  request.send();
+const getCountryData = function (country) {
+  fetch(`https://restcountries.eu/rest/v2/name/${country}`)
+    .then(response => response.json())
+    .then(data => {
+      renderCountry(data[0]);
+      console.log(data);
+      const neighbor = data[0].borders[0];
 
-  request.addEventListener('load', function () {
-    const [data] = JSON.parse(this.responseText);
+      if (!neighbor) return;
 
-    // render country 1
-    renderCountry(data);
-
-    // get neight country
-    const [neighbor] = data.borders;
-
-    if (!neighbor) return;
-
-    const request2 = new XMLHttpRequest();
-    request2.open('GET', `https://restcountries.eu/rest/v2/alpha/${neighbor}`);
-    request2.send();
-    request2.addEventListener('load', function () {
-      const data2 = JSON.parse(this.responseText);
-      renderCountry(data2, 'neighbour');
-    });
-  });
+      // Country 2
+      return fetch(`https://restcountries.eu/rest/v2/alpha/${neighbor}`);
+    })
+    .then(response => response.json())
+    .then(data => renderCountry(data, 'neighbour'));
 };
 
-getCountryAndNeighbour('usa');
+getCountryData('portugal');
