@@ -24,26 +24,38 @@ const renderCountry = function (data, className = '') {
     </article>
 `;
   countriesContainer.insertAdjacentHTML('beforeend', html);
+  countriesContainer.style.opacity = 1;
 };
 
 const renderError = function (msg) {
   countriesContainer.insertAdjacentText('beforeend', msg);
 };
 
+const getJSON = function (url, errorMsg = 'Something went wrong') {
+  return fetch(url).then(response => {
+    if (!response.ok)
+      throw new Error(`Country not found ${errorMsg} ${response.status}`);
+    return response.json();
+  });
+};
+
 const getCountryData = function (country) {
-  fetch(`https://restcountries.eu/rest/v2/name/${country}`)
-    .then(response => response.json())
+  getJSON(
+    `https://restcountries.eu/rest/v2/name/${country}`,
+    'Country not found'
+  )
     .then(data => {
       renderCountry(data[0]);
-      console.log(data);
-      const neighbor = data[0].borders[0];
+      const neighbour = data[0].borders[0];
 
-      if (!neighbor) return;
+      if (!neighbour) throw new Error(`No neighbour found`);
 
       // Country 2
-      return fetch(`https://restcountries.eu/rest/v2/alpha/${neighbor}`);
+      return getJSON(
+        `https://restcountries.eu/rest/v2/alpha/${neighbour}`,
+        'country not found'
+      );
     })
-    .then(response => response.json())
     .then(data => renderCountry(data, 'neighbour'))
     .catch(err => {
       renderError(`something went wrong ${err.message}`);
@@ -53,6 +65,45 @@ const getCountryData = function (country) {
     });
 };
 
-btn.addEventListener('click', function () {
-  getCountryData('portugal');
-});
+// btn.addEventListener('click', function () {
+//   getCountryData('portugal');
+// });
+
+const getPosition = function () {
+  return new Promise(function (resolve, reject) {
+    // navigator.geolocation.getCurrentPosition(
+    //   position => resolve(position),
+    //   err => reject(err)
+    // );
+    navigator.geolocation.getCurrentPosition(resolve, reject);
+  });
+};
+// getPosition().then(pos => console.log(pos));
+
+const whereAmI = function () {
+  getPosition()
+    .then(pos => {
+      const { latitude: lat, longitude: lng } = pos.coords;
+
+      return fetch(`https://geocode.xyz/${lat},${lng}?geoit=json`);
+    })
+    .then(res => {
+      if (!res.ok) throw new Error(`Problem with geocoding ${res.status}`);
+      return res.json();
+    })
+    .then(data => {
+      console.log(data);
+      console.log(`You are in ${data.city}, ${data.country}`);
+
+      return fetch(`https://restcountries.eu/rest/v2/name/${data.country}`);
+    })
+    .then(res => {
+      if (!res.ok) throw new Error(`Country not found (${res.status})`);
+
+      return res.json();
+    })
+    .then(data => renderCountry(data[0]))
+    .catch(err => console.error(`${err.message} 💥`));
+};
+
+btn.addEventListener('click', whereAmI);
