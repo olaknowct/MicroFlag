@@ -1,6 +1,7 @@
 'use strict';
 
 const btn = document.querySelector('.btn-country');
+const btns = document.querySelector('.buttons');
 const countriesContainer = document.querySelector('.countries');
 
 ///////////////////////////////////////
@@ -58,7 +59,8 @@ const getCountryData = function (country) {
     })
     .then(data => renderCountry(data, 'neighbour'))
     .catch(err => {
-      renderError(`something went wrong ${err.message}`);
+      // renderError(`something went wrong ${err.message}`);
+      alert(err.message);
     })
     .finally(() => {
       countriesContainer.style.opacity = 1;
@@ -80,7 +82,19 @@ const getPosition = function () {
 };
 // getPosition().then(pos => console.log(pos));
 
-const whereAmI = function () {
+const render = function () {
+  if (this.dataset.country == '') {
+    return;
+  }
+};
+
+btns.addEventListener('click', function (e) {
+  const country = e.target.dataset.country;
+  if (country != 'current') {
+    getCountryData(country);
+    return;
+  }
+
   getPosition()
     .then(pos => {
       const { latitude: lat, longitude: lng } = pos.coords;
@@ -104,6 +118,4 @@ const whereAmI = function () {
     })
     .then(data => renderCountry(data[0]))
     .catch(err => console.error(`${err.message} 💥`));
-};
-
-btn.addEventListener('click', whereAmI);
+});
