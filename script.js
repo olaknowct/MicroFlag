@@ -82,13 +82,7 @@ const getPosition = function () {
 };
 // getPosition().then(pos => console.log(pos));
 
-const render = function () {
-  if (this.dataset.country == '') {
-    return;
-  }
-};
-
-btns.addEventListener('click', function (e) {
+const render = function (e) {
   const country = e.target.dataset.country;
   if (country != 'current') {
     getCountryData(country);
@@ -118,4 +112,6 @@ btns.addEventListener('click', function (e) {
     })
     .then(data => renderCountry(data[0]))
     .catch(err => console.error(`${err.message} 💥`));
-});
+};
+
+btns.addEventListener('click', render.bind(this));
