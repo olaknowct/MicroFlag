@@ -36,10 +36,10 @@ Link: https://olaknowct.github.io/MicroFlag/index.html
 
 ### New Featues and Improvements
 	- Refactor event handler
-	- Add 4 buttons for emphasizing the following
+	- Add 4 buttons that emphasize the following
 		○ A country that doesnt have any neighbour
 		○ A Country that has neighbours
-	- Used event delegation to miximize conding
+	- Used event delegation to miximize coding
 	- Used event target (Bubbles effect)
 
    
