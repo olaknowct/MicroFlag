@@ -4,13 +4,14 @@ Link: https://olaknowct.github.io/MicroFlag/index.html
 
 ## Description
 
-- The Flag APP, Shows the Flag and its details when any based from the button clicked 
+- The Flag APP, Shows the Flag and its details based from the button clicked
 
 ## About
 
 - The Project is used for educational purposes only, its part of the lesson i took from Jonas.
 - As part of my learnings and would benefit me, I've listed down here **(See features section)** all the PSEUDO Code, SUMMARY and Feautures from this Project
 - The Project emphasize the difference of Asynchronous and Synchronous, why it was used and advantage over then catch method. 
+- Buttons attribute are preset, we can configure the map details depend on what country you wnat to display by passing query parameter from the API Endpoint.
 
 ## Concepts Tackled
 - Old school asynchronous call (AJAX)
@@ -31,7 +32,7 @@ Link: https://olaknowct.github.io/MicroFlag/index.html
 	- Get Flag details using the data from the result of geocode API
 		○ Used Rest Countries
 			§ Documentation : http://restcountries.eu/
-  - Update DOM 
+  	- Update DOM 
 
 ### New Featues and Improvements
 	- Refactor event handler
