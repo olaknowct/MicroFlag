@@ -14,13 +14,9 @@ const renderCountry = function (data, className = '') {
         <div class="country__data">
             <h3 class="country__name">${data.name}</h3>
             <h4 class="country__region">${data.region}</h4>
-            <p class="country__row"><span>👫</span>${(
-              +data.population / 1000000
-            ).toFixed(1)}</p>
+            <p class="country__row"><span>👫</span>${(+data.population / 1000000).toFixed(1)}</p>
             <p class="country__row"><span>🗣️</span>${data.languages[0].name}</p>
-            <p class="country__row"><span>💰</span>${
-              data.currencies[0].name
-            }</p>
+            <p class="country__row"><span>💰</span>${data.currencies[0].name}</p>
         </div>
     </article>
 `;
@@ -33,32 +29,25 @@ const renderError = function (msg) {
 };
 
 const getJSON = function (url, errorMsg = 'Something went wrong') {
-  return fetch(url).then(response => {
-    if (!response.ok)
-      throw new Error(`Country not found ${errorMsg} ${response.status}`);
+  return fetch(url).then((response) => {
+    if (!response.ok) throw new Error(`Country not found ${errorMsg} ${response.status}`);
     return response.json();
   });
 };
 
 const getCountryData = function (country) {
-  getJSON(
-    `https://restcountries.eu/rest/v2/name/${country}`,
-    'Country not found'
-  )
-    .then(data => {
+  getJSON(`https://restcountries.com/v2/name/${country}`, 'Country not found')
+    .then((data) => {
       renderCountry(data[0]);
       const neighbour = data[0].borders[0];
 
       if (!neighbour) throw new Error(`No neighbour found`);
 
       // Country 2
-      return getJSON(
-        `https://restcountries.eu/rest/v2/alpha/${neighbour}`,
-        'country not found'
-      );
+      return getJSON(`https://restcountries.com/v2/alpha/${neighbour}`, 'country not found');
     })
-    .then(data => renderCountry(data, 'neighbour'))
-    .catch(err => {
+    .then((data) => renderCountry(data, 'neighbour'))
+    .catch((err) => {
       // renderError(`something went wrong ${err.message}`);
       alert(err.message);
     })
@@ -90,28 +79,28 @@ const render = function (e) {
   }
 
   getPosition()
-    .then(pos => {
+    .then((pos) => {
       const { latitude: lat, longitude: lng } = pos.coords;
 
       return fetch(`https://geocode.xyz/${lat},${lng}?geoit=json`);
     })
-    .then(res => {
+    .then((res) => {
       if (!res.ok) throw new Error(`Problem with geocoding ${res.status}`);
       return res.json();
     })
-    .then(data => {
+    .then((data) => {
       console.log(data);
       console.log(`You are in ${data.city}, ${data.country}`);
 
-      return fetch(`https://restcountries.eu/rest/v2/name/${data.country}`);
+      return fetch(`https://restcountries.com/v2/name/${data.country}`);
     })
-    .then(res => {
+    .then((res) => {
       if (!res.ok) throw new Error(`Country not found (${res.status})`);
 
       return res.json();
     })
-    .then(data => renderCountry(data[0]))
-    .catch(err => console.error(`${err.message} 💥`));
+    .then((data) => renderCountry(data[0]))
+    .catch((err) => console.error(`${err.message} 💥`));
 };
 
 btns.addEventListener('click', render.bind(this));
